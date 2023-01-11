@@ -6,6 +6,9 @@ import numpy as np
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtWidgets import QFileDialog, QTextEdit, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QGridLayout
 
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+# may need to update the path to the location of tesseract executable on your machine
+
 class TextExtractor(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
@@ -82,6 +85,47 @@ class TextExtractor(QtWidgets.QWidget):
             # Display a notification message
             self.display_notification("Image uploaded successfully")
 
+    def remove_line(self, image):
+        removed = image.copy()
+        gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
+        thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
+        
+        # Remove vertical lines
+        vertical_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1,40))
+        remove_vertical = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, vertical_kernel, iterations=2)
+        cnts = cv2.findContours(remove_vertical, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        cnts = cnts[0] if len(cnts) == 2 else cnts[1]
+        for c in cnts:
+            cv2.drawContours(removed, [c], -1, (255,255,255), 15)
+
+        # Remove horizontal lines
+        horizontal_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (40,1))
+        remove_horizontal = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, horizontal_kernel, iterations=2)
+        cnts = cv2.findContours(remove_horizontal, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        cnts = cnts[0] if len(cnts) == 2 else cnts[1]
+        for c in cnts:
+            cv2.drawContours(removed, [c], -1, (255,255,255), 5)
+
+        # Repair kernel
+        repair_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3,3))
+        removed = 255 - removed
+        dilate = cv2.dilate(removed, repair_kernel, iterations=5)
+        dilate = cv2.cvtColor(dilate, cv2.COLOR_BGR2GRAY)
+        pre_result = cv2.bitwise_and(dilate, thresh)
+
+        result = cv2.morphologyEx(pre_result, cv2.MORPH_CLOSE, repair_kernel, iterations=5)
+        final = cv2.bitwise_and(result, thresh)
+
+        invert_final = 255 - final
+        
+        normal_image = cv2.cvtColor(invert_final,cv2.COLOR_GRAY2BGR)
+        return normal_image
+
+    def pre_processing(self, image):
+        gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        threshold_img = cv2.threshold(gray_image, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[-1]
+        return threshold_img
+
     def extract_text(self):
         # Check if an image has been uploaded
         if not hasattr(self, 'image_path'):
@@ -92,10 +136,10 @@ class TextExtractor(QtWidgets.QWidget):
         image = cv2.imread(self.image_path)
 
         # Convert the image to grayscale
-        gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        image = self.remove_line(image)
 
         # Threshold the image to create a binary image
-        threshold_img = cv2.threshold(gray_image, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
+        threshold_img = self.pre_processing(image)
 
         # Pass the binary image to Tesseract to extract the text
         tesseract_config = r'--oem 3 --psm 6'
@@ -114,14 +158,20 @@ class TextExtractor(QtWidgets.QWidget):
         # Display a notification message
         self.display_notification("Coppied")
 
-    def display_notification(self, message):
+    #def display_notification(self, message):
         # Create a message box
-        msg_box = QtWidgets.QMessageBox(self)
+        #msg_box = QtWidgets.QMessageBox(self)
         # Set the message and the icon
-        msg_box.setText(message)
-        msg_box.setIcon(QtWidgets.QMessageBox.Information)
+        #msg_box.setText(message)
+        #msg_box.setIcon(QtWidgets.QMessageBox.Information)
         # Display the message box
-        msg_box.exec_()
+        #msg_box.exec_()
+
+    def display_notification(self, message):
+        notification = QtWidgets.QMessageBox()
+        notification.setWindowTitle("Notification")
+        notification.setText(message)
+        notification.exec_()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
