@@ -4,7 +4,7 @@ import pytesseract
 import sys
 import numpy as np
 from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtWidgets import QFileDialog, QTextEdit, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QGridLayout
+from PyQt5.QtWidgets import QFileDialog, QTextEdit, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QGridLayout, QMessageBox
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 # may need to update the path to the location of tesseract executable on your machine
@@ -122,7 +122,9 @@ class TextExtractor(QtWidgets.QWidget):
         return normal_image
 
     def pre_processing(self, image):
+        # convert the image to grayscale
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        # Apply thresholding to create a binary image
         threshold_img = cv2.threshold(gray_image, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[-1]
         return threshold_img
 
@@ -132,50 +134,50 @@ class TextExtractor(QtWidgets.QWidget):
             self.display_notification("Please upload an image first")
             return
 
-        # Read the image file
+        # Read the image file and Rrmove the horizontal and vertical lines from it
         image = cv2.imread(self.image_path)
-
-        # Convert the image to grayscale
         image = self.remove_line(image)
 
         # Threshold the image to create a binary image
         threshold_img = self.pre_processing(image)
 
-        # Pass the binary image to Tesseract to extract the text
+        # Pass image to tesseract with appropriate parameters
         tesseract_config = r'--oem 3 --psm 6'
         text = pytesseract.image_to_string(threshold_img, config=tesseract_config, lang='Vietnamese')
-
-        # Display the extracted text in the text label
+        # Set extracted text on the text edit
         self.text_edit.setText(text)
         self.text_edit.setStyleSheet('border: 1px solid black')
         self.text_edit.setVisible(True)
-        # Display a notification message
-        self.display_notification("Complete image extraction to text")
+        # Display notification
+        self.display_notification("Text extraction complete!")
 
     def copy_text(self):
+        # Get the system clipboard
         clipboard = QApplication.clipboard()
+        # Copy the text in the text edit to the clipboard
         clipboard.setText(self.text_edit.toPlainText())
-        # Display a notification message
-        self.display_notification("Coppied")
-
-    #def display_notification(self, message):
-        # Create a message box
-        #msg_box = QtWidgets.QMessageBox(self)
-        # Set the message and the icon
-        #msg_box.setText(message)
-        #msg_box.setIcon(QtWidgets.QMessageBox.Information)
-        # Display the message box
-        #msg_box.exec_()
+        # Display a notification message that the text has been copied
+        self.display_notification("Text copied to clipboard!")
 
     def display_notification(self, message):
+        # Create a message box
         notification = QtWidgets.QMessageBox()
-        notification.setWindowTitle("Notification")
+        # Set the message
         notification.setText(message)
+        # Set the title of the notification window to "Notification"
+        notification.setWindowTitle("Notification")
+        # Display the message box
         notification.exec_()
 
 if __name__ == '__main__':
+    # Initialize QApplication, which manages the main event loop and
+    # starts the application
     app = QApplication(sys.argv)
+    # Initialize the TextExtractor widget
     ex = TextExtractor()
+    # Set the size and position of the TextExtractor widget on the screen
     ex.setGeometry(200, 50, 1500, 800)
+    # Show the TextExtractor widget
     ex.show()
+    # Run the event loop, exiting when the application is closed
     sys.exit(app.exec_())
