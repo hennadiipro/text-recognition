@@ -73,9 +73,6 @@ class View(QtWidgets.QWidget):
             self.image_label.setScaledContents(True)
             self.image_label.setPixmap(pixmap)
             self.image_label.setFixedSize(700, 700)
-            self.text_edit.setText('')
-            # Display a notification message
-            self.display_notification("Image uploaded successfully")
 
     def extract_text(self):
         from controller.text_extractor import extract_text_from_image
@@ -94,19 +91,13 @@ class View(QtWidgets.QWidget):
             print("Error:", e)
 
     def copy_text(self):
-        # Get the system clipboard
         clipboard = QApplication.clipboard()
         # Copy the text in the text edit to the clipboard
         clipboard.setText(self.text_edit.toPlainText())
-        # Display a notification message that the text has been copied
         self.display_notification("Text copied to clipboard!")
 
     def display_notification(self, message):
-        # Create a message box
         notification = QtWidgets.QMessageBox()
-        # Set the message
         notification.setText(message)
-        # Set the title of the notification window to "Notification"
         notification.setWindowTitle("Notification")
-        # Display the message box
         notification.exec_()

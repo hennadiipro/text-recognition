@@ -10,7 +10,7 @@
 
 4. Gói 'controller': Chứa tất cả các mã liên quan đến việc xử lý tương tác của người dùng và cập nhật mô hình và xem cho phù hợp.
 - tệp '__init__.py': Tệp này trống và thư mục model chứa nó sẽ được python coi là một gói.
-- tệp 'text_extractor.py': Chứa mã kết nối mô hình và view với nhau và xử lý tương tác của người dùng
+- tệp 'text_extractor.py': Chứa mã kết nối controller và view với nhau và xử lý tương tác của người dùng
 
 5. Thư mục: 'resources': Chứa tất cả các tài nguyên như các biểu tượng được ứng dụng sử dụng, các hình ảnh dùng để trích xuất văn bản.
 - thư mục: 'icon': Chứa các biểu tượng được ứng dụng sử dụng như tải lên, trích xuất và sao chép các biểu tượng.
