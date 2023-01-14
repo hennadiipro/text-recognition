@@ -41,21 +41,15 @@ def remove_line(image):
         return normal_image
 
 def pre_processing(image):
-        # convert the image to grayscale
         gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        # Apply thresholding to create a binary image
         threshold_img = cv2.threshold(gray_image, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[-1]
         return threshold_img
 
 def extract_text_from_image(image_path):
-        # Read the image file and Rrmove the horizontal and vertical lines from it
         image = cv2.imread(image_path)
         image = remove_line(image)
-
-        # Threshold the image to create a binary image
         threshold_img = pre_processing(image)
 
-        # Pass image to tesseract with appropriate parameters
         tesseract_config = r'--oem 3 --psm 6'
         text = pytesseract.image_to_string(threshold_img, config=tesseract_config, lang='Vietnamese')
         return text
