@@ -1,0 +1,31 @@
+/* Set the font and background color of the application */
+QWidget {
+    font-family: Arial;
+    background-color: #F5F5DC;
+}
+
+/* Style the buttons */
+QPushButton {
+    background-color: #87CEEB;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+}
+
+/* Change the button color on hover */
+QPushButton:hover {
+    background-color: #4682B4;
+}
+
+/* Style the text edit */
+QTextEdit {
+    background-color: white;
+    font-size: 16px;
+    padding: 10px;
+}
+
+/* Style the image label */
+QLabel {
+    background-color: white;
+}

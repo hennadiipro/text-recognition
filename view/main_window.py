@@ -67,7 +67,6 @@ class View(QtWidgets.QWidget):
             self.image_label.setPixmap(pixmap)
             self.image_label.setFixedSize(700, 700)
             self.btn_copy_text.setText("Copy Text")
-            self.btn_copy_text.setStyleSheet("background-color: None")
 
     def extract_text(self):
         from controller.text_extractor import extract_text_from_image
@@ -77,7 +76,6 @@ class View(QtWidgets.QWidget):
         text = extract_text_from_image(self.image_path)
         self.text_edit.setText(text)
         self.btn_copy_text.setText("Copy Text")
-        self.btn_copy_text.setStyleSheet("background-color: None")
         QMessageBox.information(self, 'Extracted information', 'Text extracted successfully...')
 
     def copy_text(self):
@@ -88,6 +86,5 @@ class View(QtWidgets.QWidget):
             clipboard.setText(text)
             # Show a message box to indicate that the text has been copied
             self.btn_copy_text.setText("Copied ✓")
-            self.btn_copy_text.setStyleSheet("background-color: lightblue")
         else:
             QMessageBox.warning(self, 'Warning', 'Nothing to copy!')
