@@ -86,5 +86,6 @@ class View(QtWidgets.QWidget):
             clipboard.setText(text)
             # Show a message box to indicate that the text has been copied
             self.btn_copy_text.setText("Copied ✓")
+            self.btn_copy_text.setStyleSheet("background-color: blue")
         else:
             QMessageBox.warning(self, 'Warning', 'Nothing to copy!')
