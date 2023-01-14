@@ -15,3 +15,5 @@
 5. Thư mục: 'resources': Chứa tất cả các tài nguyên như các biểu tượng được ứng dụng sử dụng, các hình ảnh dùng để trích xuất văn bản.
 - thư mục: 'icon': Chứa các biểu tượng được ứng dụng sử dụng như tải lên, trích xuất và sao chép các biểu tượng.
 - thư mục: 'images': Chứa các hình ảnh dùng để trích xuất văn bản
+
+//Distribution
