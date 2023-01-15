@@ -1,5 +1,5 @@
 from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtWidgets import QFileDialog, QTextEdit, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QGridLayout, QMessageBox, QProgressBar
+from PyQt5.QtWidgets import QFileDialog, QTextEdit, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QGridLayout, QMessageBox, QProgressBar, QMenuBar
 from PyQt5.QtCore import QTimer
 
 class View(QtWidgets.QWidget):
@@ -11,31 +11,35 @@ class View(QtWidgets.QWidget):
         self.progress_bar = QProgressBar(self)
         self.progress_bar.setVisible(False)
 
-        # Create widgets and layouts 
-        heading_layout = QHBoxLayout()
+        # Create a menu bar
+        self.menu_bar = QMenuBar(self)
 
-        self.btn_select_image = QPushButton('Upload', self)
+        # Create menus
+        file_menu = self.menu_bar.addMenu("File")
+        help_menu = self.menu_bar.addMenu("Help")
+
+        # Create actions for menus
+        open_action = file_menu.addAction("Open")
+        save_action = file_menu.addAction("Save")
+        about_action = help_menu.addAction("About")
+
+        # Connect actions to methods
+        open_action.triggered.connect(self.select_image)
+        save_action.triggered.connect(self.save_text)
+
+        # Create widgets and layouts 
         self.image_label = QLabel(self)
         self.btn_extract_text = QPushButton('Extract Text', self)
         self.text_edit = QTextEdit(self)
         self.btn_copy_text = QPushButton("Copy Text", self)
         
-        # Add a stretch factor to the heading layout
-        heading_layout.addStretch(0)
-        
         # Connect buttons to respective method
-        self.btn_select_image.clicked.connect(self.select_image)
         self.btn_extract_text.clicked.connect(self.extract_text)
         self.btn_copy_text.clicked.connect(self.copy_text)
 
         # Set the size of the buttons
-        self.btn_select_image.setFixedSize(100, 30)
         self.btn_extract_text.setFixedSize(100, 30)
         self.btn_copy_text.setFixedSize(100, 30)
-
-        # Add the buttons to the heading layout
-        heading_layout.addWidget(self.btn_select_image)
-        heading_layout.addStretch(1)
 
         # Create a layout to hold the image and text label
         body_layout = QGridLayout()
@@ -53,7 +57,7 @@ class View(QtWidgets.QWidget):
 
         # Create a layout to hold the heading and body layout
         main_layout = QVBoxLayout()
-        main_layout.addLayout(heading_layout)
+        main_layout.setMenuBar(self.menu_bar)
         main_layout.addLayout(body_layout)
 
         self.setLayout(main_layout)
@@ -102,3 +106,11 @@ class View(QtWidgets.QWidget):
             self.btn_copy_text.setStyleSheet("background-color: blue")
         else:
             QMessageBox.warning(self, 'Warning', 'Nothing to copy!')
+
+    def save_text(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.ReadOnly
+        file_name, _ = QFileDialog.getSaveFileName(self, 'Save', '', 'Text Files (*.txt);;All Files (*)', options=options)
+        if file_name:
+            with open(file_name, "w", encoding='utf8') as file:
+                file.write(self.text_edit.toPlainText())
