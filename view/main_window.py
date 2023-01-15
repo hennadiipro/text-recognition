@@ -1,9 +1,15 @@
 from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtWidgets import QFileDialog, QTextEdit, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QGridLayout, QMessageBox
+from PyQt5.QtWidgets import QFileDialog, QTextEdit, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QGridLayout, QMessageBox, QProgressBar
+from PyQt5.QtCore import QTimer
 
 class View(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
+        self.timer = QTimer()
+        self.timer.setInterval(50)
+        self.timer.timeout.connect(self.extract_text)
+        self.progress_bar = QProgressBar(self)
+        self.progress_bar.setVisible(False)
 
         # Create widgets and layouts 
         heading_layout = QHBoxLayout()
@@ -41,6 +47,7 @@ class View(QtWidgets.QWidget):
 
         body_layout.addWidget(self.image_label, 0, 0) #colomn 1 row 1
         body_layout.addWidget(self.btn_extract_text, 0, 1) #column 2 row 1
+        body_layout.addWidget(self.progress_bar, 1, 0) #column 2 row 2
         body_layout.addWidget(self.text_edit, 0, 2) #column 3 row 1
         body_layout.addWidget(self.btn_copy_text, 1, 2) #column 3 row 2
 
@@ -69,12 +76,18 @@ class View(QtWidgets.QWidget):
             self.btn_copy_text.setText("Copy Text")
 
     def extract_text(self):
-        from controller.text_extractor import extract_text_from_image
         if not hasattr(self, 'image_path'):
             QMessageBox.warning(self, 'Warning', 'Please upload an image first!')
             return
-        text = extract_text_from_image(self.image_path)
+
+        self.progress_bar.setVisible(True)
+        self.progress_bar.setMaximum(100)
+
+        from controller.text_extractor import extract_text_from_image
+        text = extract_text_from_image(self.image_path, self.progress_bar)
+
         self.text_edit.setText(text)
+        self.progress_bar.setVisible(False)
         self.btn_copy_text.setText("Copy Text")
         QMessageBox.information(self, 'Extracted information', 'Text extracted successfully...')
 

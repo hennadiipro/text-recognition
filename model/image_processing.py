@@ -1,5 +1,6 @@
 import pytesseract
 import cv2
+from PyQt5.QtCore import QTimer
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 # may need to update the path to the location of tesseract executable on your machine
@@ -45,11 +46,17 @@ def pre_processing(image):
         threshold_img = cv2.threshold(gray_image, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[-1]
         return threshold_img
 
-def extract_text_from_image(image_path):
+def extract_text_from_image(image_path, progress_bar):
         image = cv2.imread(image_path)
         image = remove_line(image)
-        threshold_img = pre_processing(image)
+        timer = QTimer()
+        timer.start()
 
+        for i in range(100):
+            threshold_img = pre_processing(image)
+            progress_bar.setValue(i)
+        
         tesseract_config = r'--oem 3 --psm 6'
         text = pytesseract.image_to_string(threshold_img, config=tesseract_config, lang='Vietnamese')
+        timer.stop()
         return text
