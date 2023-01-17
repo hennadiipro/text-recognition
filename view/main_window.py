@@ -1,67 +1,59 @@
 from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtWidgets import QFileDialog, QTextEdit, QLabel, QPushButton, QVBoxLayout, QHBoxLayout, QApplication, QGridLayout, QMessageBox, QProgressBar, QMenuBar
+from PyQt5.QtWidgets import QFileDialog, QTextEdit, QLabel, QPushButton, QVBoxLayout, QApplication, QGridLayout, QMessageBox, QProgressBar, QMenuBar
 from PyQt5.QtCore import QTimer
 
 class View(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
+
+        # Create timer
         self.timer = QTimer()
         self.timer.setInterval(50)
+        self.timer.setSingleShot(True)
         self.timer.timeout.connect(self.extract_text)
+
+        # Create progress bar
         self.progress_bar = QProgressBar(self)
         self.progress_bar.setVisible(False)
 
-        # Create a menu bar
+        # Create menu bar and actions
         self.menu_bar = QMenuBar(self)
-
-        # Create menus
         file_menu = self.menu_bar.addMenu("File")
         help_menu = self.menu_bar.addMenu("Help")
-
-        # Create actions for menus
         open_action = file_menu.addAction("Open")
         save_action = file_menu.addAction("Save")
         about_action = help_menu.addAction("About")
-
-        # Connect actions to methods
         open_action.triggered.connect(self.select_image)
         save_action.triggered.connect(self.save_text)
 
-        # Create widgets and layouts 
+        # Create widgets
         self.image_label = QLabel(self)
         self.btn_extract_text = QPushButton('Extract Text', self)
         self.text_edit = QTextEdit(self)
         self.btn_copy_text = QPushButton("Copy Text", self)
-        
-        # Connect buttons to respective method
         self.btn_extract_text.clicked.connect(self.extract_text)
         self.btn_copy_text.clicked.connect(self.copy_text)
-
-        # Set the size of the buttons
         self.btn_extract_text.setFixedSize(100, 30)
         self.btn_copy_text.setFixedSize(100, 30)
 
-        # Create a layout to hold the image and text label
+        # Create layouts and add widgets
         body_layout = QGridLayout()
-
         self.image_label.setStyleSheet('border: 1px solid black')
         self.image_label.setFixedSize(700, 700)
         self.text_edit.setStyleSheet('border: 1px solid black')
         self.text_edit.setFixedSize(700, 700)
+        body_layout.addWidget(self.image_label, 0, 0)  # column 1 row 1
+        body_layout.addWidget(self.btn_extract_text, 0, 1)  # column 2 row 1
+        body_layout.addWidget(self.text_edit, 0, 2)  # column 3 row 1
+        body_layout.addWidget(self.btn_copy_text, 1, 2)  # column 3 row 2
+        body_layout.addWidget(self.progress_bar, 1, 0)  # column 1 row 2
 
-        body_layout.addWidget(self.image_label, 0, 0) #colomn 1 row 1
-        body_layout.addWidget(self.btn_extract_text, 0, 1) #column 2 row 1
-        body_layout.addWidget(self.progress_bar, 1, 0) #column 2 row 2
-        body_layout.addWidget(self.text_edit, 0, 2) #column 3 row 1
-        body_layout.addWidget(self.btn_copy_text, 1, 2) #column 3 row 2
-
-        # Create a layout to hold the heading and body layout
         main_layout = QVBoxLayout()
-        main_layout.setMenuBar(self.menu_bar)
         main_layout.addLayout(body_layout)
-
+        main_layout.setMenuBar(self.menu_bar)
         self.setLayout(main_layout)
 
+        # Set window properties
         self.setGeometry(300, 300, 300, 150)
         self.setWindowTitle('Text Extractor')
         self.show()
@@ -114,3 +106,4 @@ class View(QtWidgets.QWidget):
         if file_name:
             with open(file_name, "w", encoding='utf8') as file:
                 file.write(self.text_edit.toPlainText())
+        QMessageBox.information(self, 'Save information', 'Saved!')
