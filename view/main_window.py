@@ -71,7 +71,7 @@ class View(QtWidgets.QWidget):
         body_layout.addWidget(self.image_label, 0, 0)  # column 1 row 1
         body_layout.addWidget(self.btn_extract_text, 0, 1)  # column 2 row 1
         body_layout.addWidget(self.text_edit, 0, 2)  # column 3 row 1
-        body_layout.addWidget(self.btn_copy_text, 1, 2)  # column 3 row 2
+        body_layout.addWidget(self.btn_copy_text, 0, 2, QtCore.Qt.AlignBottom | QtCore.Qt.AlignRight)  # column 3 row 1
         body_layout.addWidget(self.progress_bar, 1, 0)  # column 1 row 2
 
         main_layout = QVBoxLayout()
@@ -121,7 +121,7 @@ class View(QtWidgets.QWidget):
             clipboard.setText(text)
             # Show a message box to indicate that the text has been copied
             self.btn_copy_text.setText("Copied ✓")
-            self.btn_copy_text.setStyleSheet("background-color: blue")
+            self.btn_copy_text.setStyleSheet("background-color: 87CEEB")
         else:
             QMessageBox.warning(self, 'Warning', 'Nothing to copy!')
 

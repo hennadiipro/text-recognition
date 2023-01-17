@@ -6,11 +6,8 @@ QWidget {
 
 /* Style the buttons */
 QPushButton {
-    background-color: #87CEEB;
-    color: white;
     font-weight: bold;
-    border: none;
-    border-radius: 5px;
+    border: 1px solid black;
 }
 
 /* Change the button color on hover */
@@ -22,7 +19,6 @@ QPushButton:hover {
 QTextEdit {
     background-color: white;
     font-size: 16px;
-    padding: 10px;
 }
 
 /* Style the image label */
