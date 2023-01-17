@@ -128,8 +128,12 @@ class View(QtWidgets.QWidget):
     def save_text(self):
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
-        file_name, _ = QFileDialog.getSaveFileName(self, 'Save', '', 'Text Files (*.txt);;All Files (*)', options=options)
+        file_name, _ = QFileDialog.getSaveFileName(self, "Save Text", "", "Text Files (*.txt);;All Files (*)", options=options)
         if file_name:
-            with open(file_name, "w", encoding='utf8') as file:
-                file.write(self.text_edit.toPlainText())
-        QMessageBox.information(self, 'Save information', 'Saved!')
+            text = self.text_edit.toPlainText()
+            if text:
+                with open(file_name, "w", encoding='utf8') as file:
+                    file.write(text)
+                QMessageBox.information(self, "Save Successful", "Text saved successfully.")
+            else:
+                QMessageBox.warning(self, "Nothing to save", "The text area is empty.")
