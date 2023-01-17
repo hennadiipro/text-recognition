@@ -25,8 +25,11 @@ class View(QtWidgets.QWidget):
 
         current_path = os.path.dirname(os.path.abspath(__file__))
         icon_folder_path = os.path.join(current_path, "..", "resources", "icons")
+        favicon_folder_path = os.path.join(current_path, "..", "resources", "favicon")
+        favicon_path = os.path.join(favicon_folder_path, "favicon.ico")
         open_icon_path = os.path.join(icon_folder_path, "open.png")
         save_icon_path = os.path.join(icon_folder_path, "save.png")
+        extract_icon_path = os.path.join(icon_folder_path, "extract.png")
 
         # Create timer
         self.timer = QTimer()
@@ -51,8 +54,10 @@ class View(QtWidgets.QWidget):
         about_action = help_menu.addAction("About")
         open_icon = QIcon(open_icon_path)
         save_icon = QIcon(save_icon_path)
+        extract_icon = QIcon(extract_icon_path)
         open_action.setIcon(open_icon)
         save_action.setIcon(save_icon)
+        extract_action.setIcon(extract_icon)
         open_action.triggered.connect(self.select_image)
         save_action.triggered.connect(self.save_text)
         extract_action.triggered.connect(self.extract_text)
@@ -61,10 +66,13 @@ class View(QtWidgets.QWidget):
         self.image_label = QLabel(self)
         self.btn_extract_text = QPushButton('Extract Text', self)
         self.text_edit = QTextEdit(self)
-        self.btn_copy_text = QPushButton("Copy Text", self)
+        self.btn_clear_text = QPushButton("Clear", self)
+        self.btn_copy_text = QPushButton("Copy", self)
         self.btn_extract_text.clicked.connect(self.extract_text)
+        self.btn_clear_text.clicked.connect(self.clear_text)
         self.btn_copy_text.clicked.connect(self.copy_text)
         self.btn_extract_text.setFixedSize(100, 30)
+        self.btn_clear_text.setFixedSize(100, 30)
         self.btn_copy_text.setFixedSize(100, 30)
 
         # Create layouts and add widgets
@@ -76,7 +84,10 @@ class View(QtWidgets.QWidget):
         body_layout.addWidget(self.image_label, 0, 0)  # column 1 row 1
         body_layout.addWidget(self.btn_extract_text, 0, 1)  # column 2 row 1
         body_layout.addWidget(self.text_edit, 0, 2)  # column 3 row 1
-        body_layout.addWidget(self.btn_copy_text, 0, 2, QtCore.Qt.AlignBottom | QtCore.Qt.AlignRight)  # column 3 row 1
+        body_layout.addWidget(self.btn_clear_text, 0, 2,
+            QtCore.Qt.AlignBottom)# column 3 row 1
+        body_layout.addWidget(self.btn_copy_text, 0, 2,
+            QtCore.Qt.AlignBottom | QtCore.Qt.AlignRight)  # column 3 row 1
         body_layout.addWidget(self.progress_bar, 1, 0)  # column 1 row 2
 
         main_layout = QVBoxLayout()
@@ -87,6 +98,7 @@ class View(QtWidgets.QWidget):
         # Set window properties
         self.setGeometry(300, 300, 300, 150)
         self.setWindowTitle('Text Extractor')
+        self.setWindowIcon(QtGui.QIcon(favicon_path))
         self.show()
 
     def select_image(self):
@@ -117,6 +129,9 @@ class View(QtWidgets.QWidget):
         self.progress_bar.setVisible(False)
         self.btn_copy_text.setText("Copy Text")
         QMessageBox.information(self, 'Extracted information', 'Text extracted successfully...')
+
+    def clear_text(self):
+        self.text_edit.clear()
 
     def copy_text(self):
         text = self.text_edit.toPlainText()
