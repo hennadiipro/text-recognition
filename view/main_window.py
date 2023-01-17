@@ -1,10 +1,32 @@
-from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtWidgets import QFileDialog, QTextEdit, QLabel, QPushButton, QVBoxLayout, QApplication, QGridLayout, QMessageBox, QProgressBar, QMenuBar
+import os
+from PyQt5 import (
+    QtWidgets,
+    QtGui,
+    QtCore
+)
+from PyQt5.QtWidgets import (
+    QFileDialog,
+    QTextEdit,
+    QLabel,
+    QPushButton,
+    QVBoxLayout,
+    QApplication,
+    QGridLayout,
+    QMessageBox,
+    QProgressBar,
+    QMenuBar
+)
 from PyQt5.QtCore import QTimer
+from PyQt5.QtGui import QIcon
 
 class View(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
+
+        current_path = os.path.dirname(os.path.abspath(__file__))
+        icon_folder_path = os.path.join(current_path, "..", "resources", "icons")
+        open_icon_path = os.path.join(icon_folder_path, "open.png")
+        save_icon_path = os.path.join(icon_folder_path, "save.png")
 
         # Create timer
         self.timer = QTimer()
@@ -22,7 +44,11 @@ class View(QtWidgets.QWidget):
         help_menu = self.menu_bar.addMenu("Help")
         open_action = file_menu.addAction("Open")
         save_action = file_menu.addAction("Save")
-        about_action = help_menu.addAction("About")
+            #about_action = help_menu.addAction("About")
+        open_icon = QIcon(open_icon_path)
+        save_icon = QIcon(save_icon_path)
+        open_action.setIcon(open_icon)
+        save_action.setIcon(save_icon)
         open_action.triggered.connect(self.select_image)
         save_action.triggered.connect(self.save_text)
 
