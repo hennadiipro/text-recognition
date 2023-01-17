@@ -43,14 +43,19 @@ class View(QtWidgets.QWidget):
         file_menu = self.menu_bar.addMenu("File")
         help_menu = self.menu_bar.addMenu("Help")
         open_action = file_menu.addAction("Open")
+        open_action.setShortcut("Ctrl+O")
         save_action = file_menu.addAction("Save")
-            #about_action = help_menu.addAction("About")
+        save_action.setShortcut("Ctrl+S")
+        extract_action = file_menu.addAction("Extract")
+        extract_action.setShortcut("Ctrl+E")
+        about_action = help_menu.addAction("About")
         open_icon = QIcon(open_icon_path)
         save_icon = QIcon(save_icon_path)
         open_action.setIcon(open_icon)
         save_action.setIcon(save_icon)
         open_action.triggered.connect(self.select_image)
         save_action.triggered.connect(self.save_text)
+        extract_action.triggered.connect(self.extract_text)
 
         # Create widgets
         self.image_label = QLabel(self)
@@ -66,7 +71,7 @@ class View(QtWidgets.QWidget):
         body_layout = QGridLayout()
         self.image_label.setStyleSheet('border: 1px solid black')
         self.image_label.setFixedSize(700, 700)
-        self.text_edit.setStyleSheet('border: 1px solid black')
+        self.text_edit.setStyleSheet('border: 1px solid black; border-radius: 3px;')
         self.text_edit.setFixedSize(700, 700)
         body_layout.addWidget(self.image_label, 0, 0)  # column 1 row 1
         body_layout.addWidget(self.btn_extract_text, 0, 1)  # column 2 row 1
