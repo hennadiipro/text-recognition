@@ -23,6 +23,7 @@ class View(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
 
+        # Setting up paths for icons and favicon
         current_path = os.path.dirname(os.path.abspath(__file__))
         icon_folder_path = os.path.join(current_path, "..", "resources", "icons")
         favicon_folder_path = os.path.join(current_path, "..", "resources", "favicon")
@@ -30,18 +31,18 @@ class View(QtWidgets.QWidget):
         open_icon_path = os.path.join(icon_folder_path, "open.png")
         save_icon_path = os.path.join(icon_folder_path, "save.png")
         extract_icon_path = os.path.join(icon_folder_path, "extract.png")
-
-        # Create timer
+        
+        # Setting up timer for text extraction
         self.timer = QTimer()
         self.timer.setInterval(50)
         self.timer.setSingleShot(True)
         self.timer.timeout.connect(self.extract_text)
-
-        # Create progress bar
+        
+        # Setting up progress bar
         self.progress_bar = QProgressBar(self)
         self.progress_bar.setVisible(False)
-
-        # Create menu bar and actions
+        
+        # Setting up menu bar and actions
         self.menu_bar = QMenuBar(self)
         file_menu = self.menu_bar.addMenu("File")
         help_menu = self.menu_bar.addMenu("Help")
@@ -52,53 +53,63 @@ class View(QtWidgets.QWidget):
         extract_action = file_menu.addAction("Extract")
         extract_action.setShortcut("Ctrl+E")
         about_action = help_menu.addAction("About")
+        
+        # Setting up icons for actions
         open_icon = QIcon(open_icon_path)
         save_icon = QIcon(save_icon_path)
         extract_icon = QIcon(extract_icon_path)
         open_action.setIcon(open_icon)
         save_action.setIcon(save_icon)
         extract_action.setIcon(extract_icon)
+        
+        # Connecting actions to functions
         open_action.triggered.connect(self.select_image)
         save_action.triggered.connect(self.save_text)
         extract_action.triggered.connect(self.extract_text)
-
-        # Create widgets
+        
+        # Setting up widgets for displaying image and text
         self.image_label = QLabel(self)
         self.btn_extract_text = QPushButton('Extract Text', self)
         self.text_edit = QTextEdit(self)
         self.btn_clear_text = QPushButton("Clear", self)
         self.btn_copy_text = QPushButton("Copy", self)
+        
+        # Connecting buttons to functions
         self.btn_extract_text.clicked.connect(self.extract_text)
         self.btn_clear_text.clicked.connect(self.clear_text)
         self.btn_copy_text.clicked.connect(self.copy_text)
+        
+        # Setting fixed size for buttons
         self.btn_extract_text.setFixedSize(100, 30)
         self.btn_clear_text.setFixedSize(100, 30)
         self.btn_copy_text.setFixedSize(100, 30)
-
-        # Create layouts and add widgets
+        
+        # Setting up layout for the widgets
         body_layout = QGridLayout()
+        
+        # Setting styles for image and text display widgets
         self.image_label.setStyleSheet('border: 1px solid black')
         self.image_label.setFixedSize(700, 700)
         self.text_edit.setStyleSheet('border: 1px solid black; border-radius: 3px;')
         self.text_edit.setFixedSize(700, 700)
+        
+        # Adding widgets to the layout
         body_layout.addWidget(self.image_label, 0, 0)  # column 1 row 1
         body_layout.addWidget(self.btn_extract_text, 0, 1)  # column 2 row 1
         body_layout.addWidget(self.text_edit, 0, 2)  # column 3 row 1
         body_layout.addWidget(self.btn_clear_text, 0, 2,
             QtCore.Qt.AlignBottom)# column 3 row 1
         body_layout.addWidget(self.btn_copy_text, 0, 2,
-            QtCore.Qt.AlignBottom | QtCore.Qt.AlignRight)  # column 3 row 1
-        body_layout.addWidget(self.progress_bar, 1, 0)  # column 1 row 2
+            QtCore.Qt.AlignBottom | QtCore.Qt.AlignRight) # column 3 row 1
 
         main_layout = QVBoxLayout()
         main_layout.addLayout(body_layout)
         main_layout.setMenuBar(self.menu_bar)
-        self.setLayout(main_layout)
 
-        # Set window properties
-        self.setGeometry(300, 300, 300, 150)
-        self.setWindowTitle('Text Extractor')
-        self.setWindowIcon(QtGui.QIcon(favicon_path))
+        self.setLayout(main_layout)
+        self.setWindowTitle("Extract Text From Imager")
+        self.setWindowIcon(QIcon(favicon_path))
+        self.setGeometry(300, 300, 1000, 700)
         self.show()
 
     def select_image(self):
