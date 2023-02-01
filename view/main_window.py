@@ -101,7 +101,8 @@ class View(QtWidgets.QWidget):
             QtCore.Qt.AlignBottom)# column 3 row 1
         body_layout.addWidget(self.btn_copy_text, 0, 2,
             QtCore.Qt.AlignBottom | QtCore.Qt.AlignRight) # column 3 row 1
-
+        body_layout.addWidget(self.progress_bar, 1, 0)  # column 1 row 2
+        
         main_layout = QVBoxLayout()
         main_layout.addLayout(body_layout)
         main_layout.setMenuBar(self.menu_bar)
