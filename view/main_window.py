@@ -16,10 +16,11 @@ from PyQt5.QtWidgets import (
     QProgressBar,
     QMenuBar
 )
+
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QIcon
 
-class View(QtWidgets.QWidget):
+class MainWindow(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
 
@@ -31,6 +32,7 @@ class View(QtWidgets.QWidget):
         open_icon_path = os.path.join(icon_folder_path, "open.png")
         save_icon_path = os.path.join(icon_folder_path, "save.png")
         extract_icon_path = os.path.join(icon_folder_path, "extract.png")
+        capture_icon_path = os.path.join(icon_folder_path, "capture.png")
         
         # Setting up timer for text extraction
         self.timer = QTimer()
@@ -44,28 +46,36 @@ class View(QtWidgets.QWidget):
         
         # Setting up menu bar and actions
         self.menu_bar = QMenuBar(self)
+
         file_menu = self.menu_bar.addMenu("File")
         help_menu = self.menu_bar.addMenu("Help")
-        open_action = file_menu.addAction("Open")
-        open_action.setShortcut("Ctrl+O")
-        save_action = file_menu.addAction("Save")
-        save_action.setShortcut("Ctrl+S")
-        extract_action = file_menu.addAction("Extract")
-        extract_action.setShortcut("Ctrl+E")
         about_action = help_menu.addAction("About")
-        
+
+        open_action = self.menu_bar.addAction("Open")
+        #open_action = file_menu.addAction("Open")
+        open_action.setShortcut("Ctrl+O")
+        save_action = self.menu_bar.addAction("Save")
+        save_action.setShortcut("Ctrl+S")
+        extract_action = self.menu_bar.addAction("Extract")
+        extract_action.setShortcut("Ctrl+E")
+        capture_action = self.menu_bar.addAction("Capture")
+        capture_action.setShortcut("Ctrl+C")
+
         # Setting up icons for actions
         open_icon = QIcon(open_icon_path)
         save_icon = QIcon(save_icon_path)
         extract_icon = QIcon(extract_icon_path)
+        capture_icon = QIcon(capture_icon_path)
         open_action.setIcon(open_icon)
         save_action.setIcon(save_icon)
         extract_action.setIcon(extract_icon)
+        capture_action.setIcon(capture_icon)
         
         # Connecting actions to functions
         open_action.triggered.connect(self.select_image)
         save_action.triggered.connect(self.save_text)
         extract_action.triggered.connect(self.extract_text)
+        capture_action.triggered.connect(self.open_capture_window)
         
         # Setting up widgets for displaying image and text
         self.image_label = QLabel(self)
@@ -108,10 +118,15 @@ class View(QtWidgets.QWidget):
         main_layout.setMenuBar(self.menu_bar)
 
         self.setLayout(main_layout)
-        self.setWindowTitle("Extract Text From Imager")
+        self.setWindowTitle("Extract Text From Image")
         self.setWindowIcon(QIcon(favicon_path))
         self.setGeometry(300, 300, 1000, 700)
         self.show()
+
+    def open_capture_window(self):
+        from view.capture_window import CaptureWindow
+        self.capture_window = CaptureWindow()
+        self.capture_window.show()
 
     def select_image(self):
         options = QFileDialog.Options()
