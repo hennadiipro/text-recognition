@@ -1,7 +1,7 @@
-from view.main_window import View
+from view.main_window import MainWindow
 from model.image_processing import extract_text_from_image
 
-class Controller(View):
+class Controller(MainWindow):
     def __init__(self):
         super().__init__()
         self.btn_extract_text.clicked.connect(self.on_extract_text)

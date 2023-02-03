@@ -51,10 +51,10 @@ class MainWindow(QtWidgets.QWidget):
         help_menu = self.menu_bar.addMenu("Help")
         about_action = help_menu.addAction("About")
 
-        open_action = self.menu_bar.addAction("Open")
-        #open_action = file_menu.addAction("Open")
+        #open_action = self.menu_bar.addAction("Open")
+        open_action = file_menu.addAction("Open")
         open_action.setShortcut("Ctrl+O")
-        save_action = self.menu_bar.addAction("Save")
+        save_action = file_menu.addAction("Save")
         save_action.setShortcut("Ctrl+S")
         extract_action = self.menu_bar.addAction("Extract")
         extract_action.setShortcut("Ctrl+E")
