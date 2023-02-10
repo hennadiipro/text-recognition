@@ -33,6 +33,7 @@ class MainWindow(QtWidgets.QWidget):
         save_icon_path = os.path.join(icon_folder_path, "save.png")
         extract_icon_path = os.path.join(icon_folder_path, "extract.png")
         capture_icon_path = os.path.join(icon_folder_path, "capture.png")
+        about_icon_path = os.path.join(icon_folder_path, "info.png")
         
         # Setting up timer for text extraction
         self.timer = QTimer()
@@ -49,7 +50,7 @@ class MainWindow(QtWidgets.QWidget):
 
         file_menu = self.menu_bar.addMenu("File")
         help_menu = self.menu_bar.addMenu("Help")
-        about_action = help_menu.addAction("About")
+
 
         #open_action = self.menu_bar.addAction("Open")
         open_action = file_menu.addAction("Open")
@@ -61,26 +62,33 @@ class MainWindow(QtWidgets.QWidget):
         capture_action = self.menu_bar.addAction("Capture")
         capture_action.setShortcut("Ctrl+C")
 
+        about_action = help_menu.addAction("About")
+        about_action.setShortcut("Ctrl+l")
+
         # Setting up icons for actions
         open_icon = QIcon(open_icon_path)
         save_icon = QIcon(save_icon_path)
         extract_icon = QIcon(extract_icon_path)
         capture_icon = QIcon(capture_icon_path)
+        about_icon = QIcon(about_icon_path)
         open_action.setIcon(open_icon)
         save_action.setIcon(save_icon)
         extract_action.setIcon(extract_icon)
         capture_action.setIcon(capture_icon)
+        about_action.setIcon(about_icon)
         
         # Connecting actions to functions
         open_action.triggered.connect(self.select_image)
         save_action.triggered.connect(self.save_text)
         extract_action.triggered.connect(self.extract_text)
         capture_action.triggered.connect(self.open_capture_window)
-        
+        about_action.triggered.connect(self.open_about_window)
+
         # Setting up widgets for displaying image and text
         self.image_label = QLabel(self)
         self.btn_extract_text = QPushButton('Extract Text', self)
         self.text_edit = QTextEdit(self)
+        
         self.btn_clear_text = QPushButton("Clear", self)
         self.btn_copy_text = QPushButton("Copy", self)
         
@@ -98,27 +106,27 @@ class MainWindow(QtWidgets.QWidget):
         body_layout = QGridLayout()
         
         # Setting styles for image and text display widgets
-        self.image_label.setStyleSheet('border: 1px solid black')
+        self.image_label.setStyleSheet('border: 2px solid black')
         self.image_label.setFixedSize(700, 700)
-        self.text_edit.setStyleSheet('border: 1px solid black; border-radius: 3px;')
+        self.text_edit.setStyleSheet('border: 2px solid black;')
         self.text_edit.setFixedSize(700, 700)
         
         # Adding widgets to the layout
-        body_layout.addWidget(self.image_label, 0, 0)  # column 1 row 1
-        body_layout.addWidget(self.btn_extract_text, 0, 1)  # column 2 row 1
-        body_layout.addWidget(self.text_edit, 0, 2)  # column 3 row 1
-        body_layout.addWidget(self.btn_clear_text, 0, 2,
-            QtCore.Qt.AlignBottom)# column 3 row 1
-        body_layout.addWidget(self.btn_copy_text, 0, 2,
-            QtCore.Qt.AlignBottom | QtCore.Qt.AlignRight) # column 3 row 1
-        body_layout.addWidget(self.progress_bar, 1, 0)  # column 1 row 2
+        body_layout.addWidget(self.image_label, 0, 0)  
+        body_layout.addWidget(self.btn_extract_text, 0, 1)  
+        body_layout.addWidget(self.text_edit, 0, 2)  
+        body_layout.addWidget(self.btn_clear_text, 1, 2,
+            QtCore.Qt.AlignBottom)
+        body_layout.addWidget(self.btn_copy_text, 1, 2,
+            QtCore.Qt.AlignBottom | QtCore.Qt.AlignRight) 
+        body_layout.addWidget(self.progress_bar, 1, 0)  
         
         main_layout = QVBoxLayout()
         main_layout.addLayout(body_layout)
         main_layout.setMenuBar(self.menu_bar)
 
         self.setLayout(main_layout)
-        self.setWindowTitle("Extract Text From Image")
+        self.setWindowTitle("ETFT") #Extract Text From Transcript
         self.setWindowIcon(QIcon(favicon_path))
         self.setGeometry(300, 300, 1000, 700)
         self.show()
@@ -126,7 +134,7 @@ class MainWindow(QtWidgets.QWidget):
     def open_capture_window(self):
         from view.capture_window import CaptureWindow
         self.capture_window = CaptureWindow()
-        self.capture_window.show()
+        #self.capture_window.show()
 
     def select_image(self):
         options = QFileDialog.Options()
@@ -138,7 +146,7 @@ class MainWindow(QtWidgets.QWidget):
             self.image_label.setAlignment(QtCore.Qt.AlignCenter)
             self.image_label.setScaledContents(True)
             self.image_label.setPixmap(pixmap)
-            self.image_label.setFixedSize(700, 700)
+            self.image_label.setFixedSize(700,700)
             self.btn_copy_text.setText("Copy Text")
 
     def extract_text(self):
@@ -155,7 +163,7 @@ class MainWindow(QtWidgets.QWidget):
         self.text_edit.setText(text)
         self.progress_bar.setVisible(False)
         self.btn_copy_text.setText("Copy Text")
-        QMessageBox.information(self, 'Extracted information', 'Text extracted successfully...')
+        QMessageBox.information(self, 'Extracted Status', 'Text extracted successfully...')
 
     def clear_text(self):
         self.text_edit.clear()
@@ -168,7 +176,6 @@ class MainWindow(QtWidgets.QWidget):
             clipboard.setText(text)
             # Show a message box to indicate that the text has been copied
             self.btn_copy_text.setText("Copied ✓")
-            self.btn_copy_text.setStyleSheet("background-color: 87CEEB")
         else:
             QMessageBox.warning(self, 'Warning', 'Nothing to copy!')
 
@@ -184,3 +191,9 @@ class MainWindow(QtWidgets.QWidget):
                 QMessageBox.information(self, "Save Successful", "Text saved successfully.")
             else:
                 QMessageBox.warning(self, "Nothing to save", "The text area is empty.")
+
+    def open_about_window(self):
+        QMessageBox.information(self, 'Information', 'Thanks giving: Welcome to our OCR Application. This here you can do everything with data have picture format <3 !!!\n\n'
+                                                   + '--\n'
+                                                   + 'Author: B, N, K, T, T\n'
+                                                   + 'Version: 1.0.1 beta')
