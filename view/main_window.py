@@ -17,12 +17,23 @@ from PyQt5.QtWidgets import (
     QMenuBar
 )
 
-from PyQt5.QtCore import QTimer
-from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtGui import QIcon, QPixmap
+
 
 class MainWindow(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
+        self.setFixedSize(1550, 830)
+        #Enable Drag&Drop
+        self.setAcceptDrops(True) 
+
+        # Add text to image_label (Drag&Drop)
+        self.image_label = QtWidgets.QLabel('Drag & Drop\nHere', self)
+        self.image_label.setGeometry(290, 325, 150, 150)
+        self.image_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.image_label.setAcceptDrops(True)
+        self.image_label.setStyleSheet('border: 5px dashed white')
 
         # Setting up paths for icons and favicon
         current_path = os.path.dirname(os.path.abspath(__file__))
@@ -131,23 +142,35 @@ class MainWindow(QtWidgets.QWidget):
         self.setGeometry(300, 300, 1000, 700)
         self.show()
 
-    def open_capture_window(self):
-        from view.capture_window import CaptureWindow
-        self.capture_window = CaptureWindow()
-        #self.capture_window.show()
+    # Add the following event handlers to the class 
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls():
+            event.accept()
+        else:
+            event.ignore()
 
-    def select_image(self):
+    def dropEvent(self, event):
+        if event.mimeData().hasUrls():
+            file_name = event.mimeData().urls()[0].toLocalFile()
+            self.set_image(file_name) 
+    
+    def select_inage(self):
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
         file_name, _ = QFileDialog.getOpenFileName(self, 'Upload', '', 'Images (*.png *.xpm *.jpg *.bmp);;All Files (*)', options=options)
         if file_name:
-            self.image_path = file_name
-            pixmap = QtGui.QPixmap(file_name)
-            self.image_label.setAlignment(QtCore.Qt.AlignCenter)
-            self.image_label.setScaledContents(True)
-            self.image_label.setPixmap(pixmap)
-            self.image_label.setFixedSize(700,700)
-            self.btn_copy_text.setText("Copy Text")
+            self.set_image(file_name)
+
+    def set_image(self, file_name):
+        self.image_path = file_name
+        pixmap = QtGui.QPixmap(file_name)
+        self.image_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.image_label.setScaledContents(True)
+        self.image_label.setPixmap(pixmap)
+
+    def open_capture_window(self):
+        from view.capture_window import CaptureWindow
+        self.capture_window = CaptureWindow()
 
     def extract_text(self):
         if not hasattr(self, 'image_path'):
