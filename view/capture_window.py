@@ -51,7 +51,7 @@ class CaptureWindow(QtWidgets.QWidget):
         ret, frame = self.cap.read()
         self.last_frame = frame
         return ret, frame
-
+    
     def save_capture(self):
         frame = self.last_frame
         options = QFileDialog.Options()
