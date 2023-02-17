@@ -50,23 +50,24 @@ class CaptureWindow(QtWidgets.QWidget):
     def take_screenshot(self):
         self.timer.stop()
         ret, frame = self.cap.read()
-        cv2.imwrite('resources/input_mages/resulted_text.png', frame)
+        self.last_frame = frame
         return ret, frame
     
     def save_capture(self):
+        frame = self.last_frame
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
         fileName, _ = QFileDialog.getSaveFileName(self, "Save Screenshot", "", "PNG (*.png);;JPEG (*.jpeg *.jpg);;BMP (*.bmp)", options=options)
         if fileName:
-            try:
-                frame = cv2.imread('resources/input_mages/resulted_text.png')
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                image = QImage(frame, frame.shape[1], frame.shape[0], QImage.Format_RGB888)
-                pixmap = QPixmap.fromImage(image)
-                pixmap.save(fileName)
-            except:
-                print("Error saving screenshot")
-
+            if frame is None:
+                print("Error capturing frame")
+                return
+        
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            image = QImage(frame, frame.shape[1], frame.shape[0], QImage.Format_RGB888)
+            pixmap = QPixmap.fromImage(image)
+            pixmap.save(fileName)
+            
     def update_frame(self):
         ret, frame = self.cap.read()
         if not ret:
