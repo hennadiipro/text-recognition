@@ -14,7 +14,7 @@ class CaptureWindow(QtWidgets.QWidget):
         # Add a label to the new window to display the captured image
         self.capture_label = QLabel(capture_window)
         #self.capture_label.setStyleSheet('border: 1px solid black')
-        self.capture_label.setFixedSize(700, 700)
+        self.capture_label.setFixedSize(700, 700)   
 
         # Create a button for capturing the image
         capture_button = QPushButton('Capture', self)
@@ -48,25 +48,27 @@ class CaptureWindow(QtWidgets.QWidget):
 
     def take_screenshot(self):
         self.timer.stop()
-        rett, framee = self.cap.read()
-        return rett, framee
-    
+        ret, frame = self.cap.read()
+        self.last_frame = frame
+        return ret, frame
+
     def save_capture(self):
-        ret, frame = self.take_screenshot()
+        frame = self.last_frame
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
         fileName, _ = QFileDialog.getSaveFileName(self, "Save Screenshot", "", "PNG (*.png);;JPEG (*.jpeg *.jpg);;BMP (*.bmp)", options=options)
         if fileName:
-            if not ret:
+            if frame is None:
                 print("Error capturing frame")
                 return
-            
+        
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             image = QImage(frame, frame.shape[1], frame.shape[0], QImage.Format_RGB888)
             pixmap = QPixmap.fromImage(image)
             pixmap.save(fileName)
 
     def update_frame(self):
+#       print("update_frame method called")
         ret, frame = self.cap.read()
         if not ret:
             print("Error capturing frame")
