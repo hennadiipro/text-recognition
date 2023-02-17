@@ -37,6 +37,7 @@ class CaptureWindow(QtWidgets.QWidget):
         capture_widget.setLayout(capture_layout)
         capture_window.setCentralWidget(capture_widget)
         capture_window.show()
+
         self.cap = cv2.VideoCapture(0)
 
         self.timer = QTimer(self)
@@ -48,23 +49,23 @@ class CaptureWindow(QtWidgets.QWidget):
 
     def take_screenshot(self):
         self.timer.stop()
-        rett, framee = self.cap.read()
-        return rett, framee
+        ret, frame = self.cap.read()
+        cv2.imwrite('resources/input_mages/resulted_text.png', frame)
+        return ret, frame
     
     def save_capture(self):
-        ret, frame = self.take_screenshot()
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
         fileName, _ = QFileDialog.getSaveFileName(self, "Save Screenshot", "", "PNG (*.png);;JPEG (*.jpeg *.jpg);;BMP (*.bmp)", options=options)
         if fileName:
-            if not ret:
-                print("Error capturing frame")
-                return
-            
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            image = QImage(frame, frame.shape[1], frame.shape[0], QImage.Format_RGB888)
-            pixmap = QPixmap.fromImage(image)
-            pixmap.save(fileName)
+            try:
+                frame = cv2.imread('resources/input_mages/resulted_text.png')
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                image = QImage(frame, frame.shape[1], frame.shape[0], QImage.Format_RGB888)
+                pixmap = QPixmap.fromImage(image)
+                pixmap.save(fileName)
+            except:
+                print("Error saving screenshot")
 
     def update_frame(self):
         ret, frame = self.cap.read()
