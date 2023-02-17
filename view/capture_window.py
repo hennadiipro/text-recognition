@@ -37,6 +37,7 @@ class CaptureWindow(QtWidgets.QWidget):
         capture_widget.setLayout(capture_layout)
         capture_window.setCentralWidget(capture_widget)
         capture_window.show()
+
         self.cap = cv2.VideoCapture(0)
 
         self.timer = QTimer(self)
@@ -66,7 +67,7 @@ class CaptureWindow(QtWidgets.QWidget):
             image = QImage(frame, frame.shape[1], frame.shape[0], QImage.Format_RGB888)
             pixmap = QPixmap.fromImage(image)
             pixmap.save(fileName)
-
+            
     def update_frame(self):
 #       print("update_frame method called")
         ret, frame = self.cap.read()

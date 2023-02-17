@@ -154,7 +154,7 @@ class MainWindow(QtWidgets.QWidget):
             file_name = event.mimeData().urls()[0].toLocalFile()
             self.set_image(file_name) 
     
-    def select_inage(self):
+    def select_image(self):
         options = QFileDialog.Options()
         options |= QFileDialog.ReadOnly
         file_name, _ = QFileDialog.getOpenFileName(self, 'Upload', '', 'Images (*.png *.xpm *.jpg *.bmp);;All Files (*)', options=options)
