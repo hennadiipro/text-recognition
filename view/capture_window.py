@@ -69,7 +69,7 @@ class CaptureWindow(QtWidgets.QWidget):
             pixmap.save(fileName)
             
     def update_frame(self):
-#       print("update_frame method called")
+        print("update_frame method called")
         ret, frame = self.cap.read()
         if not ret:
             print("Error capturing frame")
