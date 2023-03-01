@@ -1,5 +1,5 @@
 import cv2
-from PyQt5 import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtWidgets import QFileDialog, QLabel, QPushButton, QGridLayout, QWidget, QMainWindow
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QImage, QPixmap
@@ -48,10 +48,30 @@ class CaptureWindow(QtWidgets.QWidget):
         self.timer.start()
 
     def take_screenshot(self):
+        # Pause the timer
+        self.timer.stop()
+
+        # Display the current frame in a separate window
+        ret, frame = self.cap.read()
+        cv2.imshow("Select ROI", frame)
+        cv2.moveWindow("Select ROI", 630, 100)
+
+        # Allow the user to select the ROI
+        roi = cv2.selectROI("Select ROI", frame, fromCenter=True, showCrosshair=True)
+        cv2.destroyWindow("Select ROI")
+
+        # Crop the frame using the ROI
+        x, y, w, h = roi
+        cropped_frame = frame[y:y+h, x:x+w]
+
+        self.last_frame = cropped_frame
+        return ret, cropped_frame
+
+    """def take_screenshot(self):
         self.timer.stop()
         ret, frame = self.cap.read()
         self.last_frame = frame
-        return ret, frame
+        return ret, frame"""
     
     def save_capture(self):
         frame = self.last_frame
