@@ -14,7 +14,7 @@ class CaptureWindow(QtWidgets.QWidget):
         # Add a label to the new window to display the captured image
         self.capture_label = QLabel(capture_window)
         #self.capture_label.setStyleSheet('border: 1px solid black')
-        self.capture_label.setFixedSize(700, 700)
+        self.capture_label.setFixedSize(700, 700)   
 
         # Create a button for capturing the image
         capture_button = QPushButton('Capture', self)
@@ -89,6 +89,7 @@ class CaptureWindow(QtWidgets.QWidget):
             pixmap.save(fileName)
             
     def update_frame(self):
+        print("update_frame method called")
         ret, frame = self.cap.read()
         if not ret:
             print("Error capturing frame")
